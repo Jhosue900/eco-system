@@ -1,17 +1,19 @@
-import { CheckCircle2, Leaf, Lock, Mail, MapPin, User } from "lucide-react";
+import { CheckCircle2, Gift, HandHeart, Heart, Leaf, Lock, Mail, MapPin, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppShell, PageContainer } from "../../components/AppShell";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 
-const API_BASE = import.meta.env.VITE_API_URL;
+// Strip any trailing slash so we never end up with a double "//" in the
+// final URL (which triggers a redirect that strips CORS headers).
+const API_BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/+$/, "");
 
 const SuccessCard = ({ name }: { name: string }): JSX.Element => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const timer = setTimeout(() => navigate("/login"), 10000);
+    const timer = setTimeout(() => navigate("/login"), 3000);
     return () => clearTimeout(timer);
   }, [navigate]);
 
@@ -42,6 +44,27 @@ const SuccessCard = ({ name }: { name: string }): JSX.Element => {
   );
 };
 
+const userTypeOptions = [
+  {
+    value: "donor",
+    icon: Gift,
+    label: "Donante",
+    description: "Quiero donar artículos o dinero.",
+  },
+  {
+    value: "beneficiary",
+    icon: HandHeart,
+    label: "Beneficiario",
+    description: "Quiero recibir donaciones.",
+  },
+  {
+    value: "both",
+    icon: Heart,
+    label: "Ambos",
+    description: "Quiero donar y también recibir.",
+  },
+] as const;
+
 export const CreateAccount = (): JSX.Element => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -52,6 +75,7 @@ export const CreateAccount = (): JSX.Element => {
     city: "",
     email: "",
     password: "",
+    userType: "donor" as "donor" | "beneficiary" | "both",
   });
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -78,7 +102,7 @@ export const CreateAccount = (): JSX.Element => {
           city: form.city,
           mail: form.email,
           pass: form.password,
-          user_type: "donor",
+          user_type: form.userType,
         }),
       });
 
@@ -251,6 +275,58 @@ export const CreateAccount = (): JSX.Element => {
                   placeholder="Mínimo 8 caracteres"
                   className="h-11 rounded-xl border-[#cfe6d6] bg-[#f7fcf6] pl-9 text-sm focus-visible:ring-[#27bb5c]"
                 />
+              </div>
+            </div>
+
+            <div className="mt-5">
+              <label className="mb-2 block text-sm font-bold text-[#526158]">
+                Tipo de cuenta
+              </label>
+              <div className="grid gap-3 sm:grid-cols-3">
+                {userTypeOptions.map(({ value, icon: Icon, label, description }) => {
+                  const selected = form.userType === value;
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() =>
+                        setForm((prev) => ({ ...prev, userType: value }))
+                      }
+                      className={`flex flex-col items-start gap-2 rounded-2xl border-2 p-4 text-left transition-colors ${
+                        selected
+                          ? "border-[#27bb5c] bg-[#e8f8e9]"
+                          : "border-[#e1eee3] bg-[#f7fcf6] hover:border-[#a8dcb4]"
+                      }`}
+                    >
+                      <div className="flex w-full items-center justify-between">
+                        <span
+                          className={`grid h-9 w-9 place-items-center rounded-full ${
+                            selected
+                              ? "bg-[#c5edcf] text-[#087532]"
+                              : "bg-white text-[#718077]"
+                          }`}
+                        >
+                          <Icon size={16} />
+                        </span>
+                        <span
+                          className={`h-4 w-4 rounded-full border-2 ${
+                            selected
+                              ? "border-[#159449] bg-[#159449]"
+                              : "border-[#bacdbf]"
+                          }`}
+                        >
+                          {selected && (
+                            <CheckCircle2 size={12} className="text-white" />
+                          )}
+                        </span>
+                      </div>
+                      <span className="text-sm font-bold">{label}</span>
+                      <span className="text-xs leading-5 text-[#718077]">
+                        {description}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
