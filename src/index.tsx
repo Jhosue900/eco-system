@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 //import { CharityProfile } from "./screens/CharityProfile/CharityProfile";
 //import { CreateCharityProfile } from "./screens/CharityProfile/CreateCharityProfile";
-import { CreateAccount } from "./screens/CreateAccount/CreateAccount";
+import { CreateAccount } from "./screens/LoginForms/CreateAccount";
 import { Login } from "./screens/LoginForms/Login";
 import { CreateDonation } from "./screens/CreateDonation/CreateDonation";
 import { DonationCategory } from "./screens/CreateDonation/DonationCategory";
