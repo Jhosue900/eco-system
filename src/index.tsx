@@ -2,7 +2,9 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { CharityProfile } from "./screens/CharityProfile/CharityProfile";
-import { CreateAccount } from "./screens/LoginForms/createAccount";
+import { CreateCharityProfile } from "./screens/CharityProfile/CreateCharityProfile";
+import { CreateAccount } from "./screens/CreateAccount/CreateAccount";
+import { Login } from "./screens/LoginForms/Login";
 import { CreateDonation } from "./screens/CreateDonation/CreateDonation";
 import { DonationCategory } from "./screens/CreateDonation/DonationCategory";
 import { DonationDetailsForm } from "./screens/CreateDonation/DonationDetails";
@@ -12,7 +14,6 @@ import { DonationDetails } from "./screens/DonationDetails/DonationDetails";
 import { DonationHistory } from "./screens/DonationHistory/DonationHistory";
 import { LandingPage } from "./screens/LandingPage/LandingPage";
 import { DonationMarketplace } from "./screens/DonationMarketplace/DonationMarketplace";
-
 createRoot(document.getElementById("app") as HTMLElement).render(
   <StrictMode>
     <BrowserRouter>
@@ -25,7 +26,9 @@ createRoot(document.getElementById("app") as HTMLElement).render(
         <Route path="/create-donation/details" element={<DonationDetailsForm />} />
         <Route path="/create-donation/review" element={<DonationReview />} />
         <Route path="/charity-profile" element={<CharityProfile />} />
+        <Route path="/create-charity-profile" element={<CreateCharityProfile />} />
         <Route path="/register" element={<CreateAccount />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/history" element={<DonationHistory />} />
         <Route path="/donation-details" element={<DonationDetails />} />
         <Route path="*" element={<LandingPage />} />
