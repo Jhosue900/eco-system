@@ -1,11 +1,48 @@
-import { Leaf, Lock, Mail, MapPin, User } from "lucide-react";
-import { useState } from "react";
+import { CheckCircle2, Leaf, Lock, Mail, MapPin, User } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppShell, PageContainer } from "../../components/AppShell";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 
-const API_URL = import.meta.env.VITE_API_URL;
+// Strip any trailing slash so we never end up with a double "//" in the
+// final URL (which triggers a redirect that strips CORS headers).
+const API_BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/+$/, "");
+
+const SuccessCard = ({ name }: { name: string }): JSX.Element => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const timer = setTimeout(() => navigate("/login"), 3000);
+    return () => clearTimeout(timer);
+  }, [navigate]);
+
+  return (
+    <div className="mx-auto max-w-xl text-center">
+      <div className="mt-10 rounded-[28px] bg-white p-10 shadow-[0_20px_50px_rgba(43,91,58,.12)]">
+        <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-[#d9f2df] text-[#159449]">
+          <CheckCircle2 size={32} />
+        </div>
+        <h1 className="mt-6 text-2xl font-extrabold text-[#087532]">
+          ¡Cuenta creada con éxito!
+        </h1>
+        <p className="mx-auto mt-3 max-w-sm leading-6 text-[#617066]">
+          {name ? `Bienvenido/a, ${name}. ` : ""}
+          Ya puedes iniciar sesión y empezar a donar con ReVida.
+        </p>
+        <Button
+          onClick={() => navigate("/login")}
+          className="mt-7 w-full rounded-full bg-[#27bb5c] py-5 font-bold text-white hover:bg-[#149b47]"
+        >
+          Ir a iniciar sesión
+        </Button>
+        <p className="mt-3 text-xs text-[#94a198]">
+          Serás redirigido automáticamente en unos segundos...
+        </p>
+      </div>
+    </div>
+  );
+};
 
 export const CreateAccount = (): JSX.Element => {
   const navigate = useNavigate();
@@ -20,6 +57,7 @@ export const CreateAccount = (): JSX.Element => {
   });
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const set =
     (key: keyof typeof form) =>
@@ -31,7 +69,7 @@ export const CreateAccount = (): JSX.Element => {
     setErrorMessage("");
     setSubmitting(true);
     try {
-      const response = await fetch(`${API_URL}/register`, {
+      const response = await fetch(`${API_BASE}/api/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -52,7 +90,7 @@ export const CreateAccount = (): JSX.Element => {
         throw new Error(data?.error ?? "No se pudo crear la cuenta.");
       }
 
-      navigate("/login");
+      setSuccess(true);
     } catch (err) {
       setErrorMessage(
         err instanceof Error
@@ -63,6 +101,16 @@ export const CreateAccount = (): JSX.Element => {
       setSubmitting(false);
     }
   };
+
+  if (success) {
+    return (
+      <AppShell>
+        <PageContainer>
+          <SuccessCard name={form.name} />
+        </PageContainer>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell>
