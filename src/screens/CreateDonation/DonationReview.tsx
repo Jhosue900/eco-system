@@ -2,6 +2,13 @@ import { CheckCircle2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { AppShell, PageContainer } from "../../components/AppShell";
 import { DonationStepLayout } from "./DonationStepLayout";
+import { useState, useEffect } from "react";
+import {
+  getStoredToken,
+  getStoredUser,
+  isValidJwt,
+  type StoredUser,
+} from "../../lib/auth";
 
 const summary = [
   ["Category", "Food"],
@@ -12,6 +19,23 @@ const summary = [
 ];
 export const DonationReview = (): JSX.Element => {
   const navigate = useNavigate();
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<StoredUser | null>(null);
+
+  useEffect(() => {
+    const authenticated = isValidJwt(getStoredToken());
+    setIsAuthenticated(authenticated);
+
+    if (!authenticated) {
+      navigate("/register");
+      return;
+    }
+
+    setUser(getStoredUser());
+  }, [navigate]);
+
+  
   return (
     <AppShell>
       <PageContainer>

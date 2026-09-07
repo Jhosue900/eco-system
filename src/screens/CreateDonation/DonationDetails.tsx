@@ -1,8 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppShell, PageContainer } from "../../components/AppShell";
 import { Input } from "../../components/ui/input";
 import { DonationStepLayout } from "./DonationStepLayout";
+import {
+  getStoredToken,
+  getStoredUser,
+  isValidJwt,
+  type StoredUser,
+} from "../../lib/auth";
+
+
 
 export const DonationDetailsForm = (): JSX.Element => {
   const [form, setForm] = useState({
@@ -15,6 +23,21 @@ export const DonationDetailsForm = (): JSX.Element => {
   const set =
     (key: keyof typeof form) => (event: React.ChangeEvent<HTMLInputElement>) =>
       setForm((prev) => ({ ...prev, [key]: event.target.value }));
+
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [user, setUser] = useState<StoredUser | null>(null);
+  
+    useEffect(() => {
+      const authenticated = isValidJwt(getStoredToken());
+      setIsAuthenticated(authenticated);
+  
+      if (!authenticated) {
+        navigate("/register");
+        return;
+      }
+  
+      setUser(getStoredUser());
+    }, [navigate]);
   return (
     <AppShell>
       <PageContainer>

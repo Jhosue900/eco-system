@@ -1,4 +1,4 @@
-import { CheckCircle2, Gift, HandHeart, Heart, Leaf, Lock, Mail, MapPin, User } from "lucide-react";
+import { CheckCircle2, Gift, HandHeart, HandHelping, Heart, Leaf, Lock, Mail, MapPin, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppShell, PageContainer } from "../../components/AppShell";
@@ -58,6 +58,12 @@ const userTypeOptions = [
     description: "Quiero recibir donaciones.",
   },
   {
+    value: "volunteer",
+    icon: HandHelping,
+    label: "Voluntario",
+    description: "Quiero apoyar con tiempo y esfuerzo.",
+  },
+  {
     value: "both",
     icon: Heart,
     label: "Ambos",
@@ -75,7 +81,7 @@ export const CreateAccount = (): JSX.Element => {
     city: "",
     email: "",
     password: "",
-    userType: "donor" as "donor" | "beneficiary" | "both",
+    userType: "donor" as "donor" | "beneficiary" | "volunteer" | "both",
   });
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -282,7 +288,7 @@ export const CreateAccount = (): JSX.Element => {
               <label className="mb-2 block text-sm font-bold text-[#526158]">
                 Tipo de cuenta
               </label>
-              <div className="grid gap-3 sm:grid-cols-3">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
                 {userTypeOptions.map(({ value, icon: Icon, label, description }) => {
                   const selected = form.userType === value;
                   return (

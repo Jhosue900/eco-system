@@ -1,8 +1,14 @@
 import { Shirt, Soup, Tag, ToyBrick } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppShell, PageContainer } from "../../components/AppShell";
 import { DonationStepLayout, ChoiceCard } from "./DonationStepLayout";
+import {
+  getStoredToken,
+  getStoredUser,
+  isValidJwt,
+  type StoredUser,
+} from "../../lib/auth";
 
 const categories = [
   [Soup, "Food"],
@@ -13,6 +19,22 @@ const categories = [
 export const DonationCategory = (): JSX.Element => {
   const [selected, setSelected] = useState("");
   const navigate = useNavigate();
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<StoredUser | null>(null);
+
+  useEffect(() => {
+    const authenticated = isValidJwt(getStoredToken());
+    setIsAuthenticated(authenticated);
+
+    if (!authenticated) {
+      navigate("/register");
+      return;
+    }
+
+    setUser(getStoredUser());
+  }, [navigate]);
+
   return (
     <AppShell>
       <PageContainer>

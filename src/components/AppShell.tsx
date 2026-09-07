@@ -135,11 +135,10 @@ export const AppShell = ({ children }: { children: React.ReactNode }): JSX.Eleme
       <footer className="mt-14 rounded-t-[38px] bg-white px-6 py-10 lg:px-12">
         <div className="mx-auto flex max-w-[1240px] flex-col justify-between gap-5 text-sm text-[#657169] sm:flex-row sm:items-center">
           <div>
-            <p className="font-extrabold text-[#087532]">ReVida</p>
-            <p className="mt-1">© 2024 ReVida Climate-Tech. For a sustainable future.</p>
+            <p className="font-extrabold text-[#087532]">EcoSystem</p>
+            <p className="mt-1">© 2025 EcoSystem. For a sustainable future.</p>
           </div>
           <div className="flex flex-wrap gap-5">
-            <span>Sustainability Report</span>
             <span>Charity Partners</span>
             <span>Terms of Service</span>
             <span>Contact</span>

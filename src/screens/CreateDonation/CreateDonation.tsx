@@ -3,9 +3,34 @@ import { useNavigate } from "react-router-dom";
 import { AppShell, PageContainer } from "../../components/AppShell";
 import { Button } from "../../components/ui/button";
 import { DonationStepLayout } from "./DonationStepLayout";
+import { useEffect, useState } from "react";
+import {
+  getStoredToken,
+  getStoredUser,
+  isValidJwt,
+  type StoredUser,
+} from "../../lib/auth";
 
 export const CreateDonation = (): JSX.Element => {
   const navigate = useNavigate();
+
+  
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<StoredUser | null>(null);
+
+  useEffect(() => {
+    const authenticated = isValidJwt(getStoredToken());
+    setIsAuthenticated(authenticated);
+
+    if (!authenticated) {
+      navigate("/register");
+      return;
+    }
+
+    setUser(getStoredUser());
+  }, [navigate]);
+
   return (
     <AppShell>
       <PageContainer>
