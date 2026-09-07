@@ -1,5 +1,7 @@
-import { Bell, CircleUserRound, Leaf } from "lucide-react";
+import { CircleUserRound, Leaf, LogOut, UserRound } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { clearStoredToken, getCurrentUser, getStoredToken, isValidJwt } from "../lib/auth";
 
 const links = [
   { label: "Marketplace", to: "/marketplace" },
@@ -9,6 +11,40 @@ const links = [
 
 export const AppShell = ({ children }: { children: React.ReactNode }): JSX.Element => {
   const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setIsAuthenticated(isValidJwt(getStoredToken()));
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const currentUser = getCurrentUser();
+
+  const handleProfileButtonClick = () => {
+    if (isAuthenticated) {
+      setIsProfileMenuOpen((prev) => !prev);
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const handleLogout = () => {
+    clearStoredToken();
+    setIsAuthenticated(false);
+    setIsProfileMenuOpen(false);
+    navigate("/login");
+  };
 
   return (
     <div className="min-h-screen bg-[#eef6f0] text-[#142018]">
@@ -46,22 +82,50 @@ export const AppShell = ({ children }: { children: React.ReactNode }): JSX.Eleme
               Donate Now
             </button>
 
-            <button
-              aria-label="Notifications"
-              type="button"
-              className="hidden rounded-full p-2 text-[#526158] transition-colors hover:bg-[#e5f3e7] sm:block"
-            >
-              <Bell size={17} />
-            </button>
+            <div className="relative" ref={profileMenuRef}>
+              <button
+                aria-label="Profile"
+                aria-haspopup="menu"
+                aria-expanded={isProfileMenuOpen}
+                type="button"
+                onClick={handleProfileButtonClick}
+                className="rounded-full p-2 text-[#526158] transition-colors hover:bg-[#e5f3e7]"
+              >
+                <CircleUserRound size={18} />
+              </button>
 
-            <button
-              aria-label="Profile"
-              type="button"
-              onClick={() => navigate("/register")}
-              className="rounded-full p-2 text-[#526158] transition-colors hover:bg-[#e5f3e7]"
-            >
-              <CircleUserRound size={18} />
-            </button>
+              {isAuthenticated && isProfileMenuOpen && (
+                <div
+                  role="menu"
+                  className="absolute right-0 top-11 w-52 rounded-2xl border border-[#d8e8dc] bg-white p-2 shadow-[0_16px_36px_rgba(31,78,44,0.14)]"
+                >
+                  {currentUser?.name && (
+                    <p className="truncate px-3 pb-2 pt-1 text-xs font-semibold text-[#94a198]">
+                      {currentUser.name}
+                    </p>
+                  )}
+                  <button
+                    role="menuitem"
+                    type="button"
+                    onClick={() => {
+                      setIsProfileMenuOpen(false);
+                      navigate("/profile");
+                    }}
+                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-semibold text-[#142018] transition-colors hover:bg-[#e5f3e7]"
+                  >
+                    <UserRound size={16} /> Ver perfil
+                  </button>
+                  <button
+                    role="menuitem"
+                    type="button"
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-semibold text-[#bd5548] transition-colors hover:bg-[#f9dfda]"
+                  >
+                    <LogOut size={16} /> Cerrar sesión
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>

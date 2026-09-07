@@ -40,13 +40,19 @@ export const Login = (): JSX.Element => {
         throw new Error(data?.error ?? "Correo o contraseña incorrectos.");
       }
 
-      // Adjust this to whatever your backend actually returns
-      // (e.g. a JWT token, session cookie, or user object).
-      if (data?.token) {
-        localStorage.setItem("revida_token", data.token);
+      // The backend returns the token at data.session.access_token
+      // (Supabase-style response), not data.token.
+      if (data?.session?.access_token) {
+        localStorage.setItem("ecosystem_jwt", data.session.access_token);
       }
 
-      navigate("/marketplace");
+      // Keep a lightweight copy of the user's basic info so the UI can show
+      // a name without needing to decode the JWT.
+      if (data?.user) {
+        localStorage.setItem("ecosystem_user", JSON.stringify(data.user));
+      }
+
+      navigate("/dashboard");
     } catch (err) {
       setErrorMessage(
         err instanceof Error
