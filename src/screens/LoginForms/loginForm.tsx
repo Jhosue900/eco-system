@@ -7,7 +7,7 @@ import { Input } from "../../components/ui/input";
 
 // Strip any trailing slash so we never end up with a double "//" in the
 // final URL (which triggers a redirect that strips CORS headers).
-const API_BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/+$/, "");
+const API_BASE = import.meta.env.VITE_API_URL;
 
 export const Login = (): JSX.Element => {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export const Login = (): JSX.Element => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          mail: form.email,
+          email: form.email,
           pass: form.password,
         }),
       });

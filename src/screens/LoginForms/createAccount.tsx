@@ -28,7 +28,7 @@ const SuccessCard = ({ name }: { name: string }): JSX.Element => {
         </h1>
         <p className="mx-auto mt-3 max-w-sm leading-6 text-[#617066]">
           {name ? `Bienvenido/a, ${name}. ` : ""}
-          Ya puedes iniciar sesión y empezar a donar con ReVida.
+          Ya puedes iniciar sesión y empezar a donar con EcoSystem.
         </p>
         <Button
           onClick={() => navigate("/login")}
